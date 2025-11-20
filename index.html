@@ -68,8 +68,8 @@
         // --- COMPONENTES VISUAIS ---
 
         const Home = ({ setActiveTab, textContent, setTextContent, handleFile, aiPrompt, setAiPrompt, generateText, isGenerating }) => (
-            <div className="p-6 space-y-8 pb-32 animate-fade-in">
-                <header className="flex justify-between items-center">
+            <div className="flex flex-col h-full">
+                <header className="flex justify-between items-center p-6 bg-slate-900 z-10 sticky top-0">
                     <div>
                         <h1 className="text-2xl font-bold text-white">LeitorIA</h1>
                         <p className="text-slate-400 text-sm">Seu assistente de leitura</p>
@@ -79,66 +79,69 @@
                     </button>
                 </header>
 
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <label className="text-sm font-semibold text-orange-400 uppercase tracking-wider">1. Texto para Ler</label>
-                        <label className="text-xs bg-slate-800 px-3 py-1.5 rounded-full text-slate-300 cursor-pointer hover:bg-slate-700 flex items-center gap-1.5 transition-colors border border-slate-700">
-                            <Icon name="FileText" size={12} /> Importar .txt
-                            <input type="file" className="hidden" accept=".txt" onChange={handleFile} />
-                        </label>
-                    </div>
-                    
-                    <textarea
-                        value={textContent}
-                        onChange={(e) => setTextContent(e.target.value)}
-                        placeholder="Cole seu texto aqui, ou o conteúdo do seu PDF/DOC..."
-                        className="w-full h-40 bg-slate-800/50 border border-slate-700 rounded-xl p-4 text-white placeholder-slate-500 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none resize-none text-base leading-relaxed transition-all"
-                    ></textarea>
-
-                    {textContent && (
-                        <button 
-                            onClick={() => setActiveTab('player')}
-                            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20 transition-all active:scale-[0.98]"
-                        >
-                            <Icon name="PlayCircle" /> Ouvir este texto
-                        </button>
-                    )}
-                </div>
-
-                <div className="relative flex py-4 items-center">
-                    <div className="flex-grow border-t border-slate-800"></div>
-                    <span className="flex-shrink-0 mx-4 text-slate-600 text-xs font-bold">OU</span>
-                    <div className="flex-grow border-t border-slate-800"></div>
-                </div>
-
-                <div className="glass p-5 rounded-2xl space-y-4 border border-orange-500/10 shadow-xl">
-                    <div className="flex items-center gap-2 text-orange-400">
-                        <div className="p-1.5 bg-orange-500/10 rounded-lg">
-                            <Icon name="Sparkles" size={18} />
+                <div className="flex-1 overflow-y-auto p-6 pb-32 hide-scrollbar space-y-8">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm font-semibold text-orange-400 uppercase tracking-wider">1. Texto para Ler</label>
+                            <label className="text-xs bg-slate-800 px-3 py-1.5 rounded-full text-slate-300 cursor-pointer hover:bg-slate-700 flex items-center gap-1.5 transition-colors border border-slate-700">
+                                <Icon name="FileText" size={12} /> Importar .txt
+                                <input type="file" className="hidden" accept=".txt" onChange={handleFile} />
+                            </label>
                         </div>
-                        <span className="font-bold text-sm">Criar com IA</span>
+                        
+                        <textarea
+                            value={textContent}
+                            onChange={(e) => setTextContent(e.target.value)}
+                            placeholder="Cole seu texto aqui, ou o conteúdo do seu PDF/DOC..."
+                            className="w-full h-40 bg-slate-800/50 border border-slate-700 rounded-xl p-4 text-white placeholder-slate-500 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none resize-none text-base leading-relaxed transition-all"
+                        ></textarea>
+
+                        {textContent && (
+                            <button 
+                                onClick={() => setActiveTab('player')}
+                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20 transition-all active:scale-[0.98]"
+                            >
+                                <Icon name="PlayCircle" /> Ouvir este texto
+                            </button>
+                        )}
                     </div>
-                    <input 
-                        type="text"
-                        value={aiPrompt}
-                        onChange={(e) => setAiPrompt(e.target.value)}
-                        placeholder="Ex: História da Roma Antiga..."
-                        className="w-full bg-slate-900/80 border border-slate-700/50 rounded-xl p-3.5 text-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all"
-                    />
-                    <button 
-                        onClick={generateText}
-                        disabled={isGenerating}
-                        className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-lg shadow-orange-900/20"
-                    >
-                        {isGenerating ? <span className="animate-spin">⌛</span> : <Icon name="Zap" size={18} />}
-                        {isGenerating ? "Escrevendo..." : "Gerar Texto"}
-                    </button>
+
+                    <div className="relative flex py-2 items-center">
+                        <div className="flex-grow border-t border-slate-800"></div>
+                        <span className="flex-shrink-0 mx-4 text-slate-600 text-xs font-bold">OU</span>
+                        <div className="flex-grow border-t border-slate-800"></div>
+                    </div>
+
+                    <div className="glass p-5 rounded-2xl space-y-4 border border-orange-500/10 shadow-xl">
+                        <div className="flex items-center gap-2 text-orange-400">
+                            <div className="p-1.5 bg-orange-500/10 rounded-lg">
+                                <Icon name="Sparkles" size={18} />
+                            </div>
+                            <span className="font-bold text-sm">Criar com IA</span>
+                        </div>
+                        <input 
+                            type="text"
+                            value={aiPrompt}
+                            onChange={(e) => setAiPrompt(e.target.value)}
+                            placeholder="Ex: História da Roma Antiga..."
+                            className="w-full bg-slate-900/80 border border-slate-700/50 rounded-xl p-3.5 text-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all"
+                        />
+                        <button 
+                            onClick={generateText}
+                            disabled={isGenerating}
+                            className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-lg shadow-orange-900/20"
+                        >
+                            {isGenerating ? <span className="animate-spin">⌛</span> : <Icon name="Zap" size={18} />}
+                            {isGenerating ? "Escrevendo..." : "Gerar Texto"}
+                        </button>
+                    </div>
                 </div>
             </div>
         );
 
         const Player = ({ stop, setActiveTab, saveToLibrary, textContent, isPlaying, isPaused, rate, setRate, play, showToast, speakText, currentPositionRef, lastPrompt, continueGenerating, isGenerating }) => (
-            <div className="h-screen flex flex-col bg-slate-900">
+            <div className="h-full flex flex-col bg-slate-900 relative">
+                {/* Header do Player - Fixo no topo */}
                 <div className="p-4 pt-8 flex justify-between items-center bg-slate-900/95 backdrop-blur-md z-20 sticky top-0 border-b border-slate-800">
                     <button onClick={() => { stop(); setActiveTab('home'); }} className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors">
                         <Icon name="ChevronDown" />
@@ -154,8 +157,9 @@
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 pb-48 hide-scrollbar">
-                    <div className="max-w-2xl mx-auto">
+                {/* Conteúdo de Texto - Única parte que rola */}
+                <div className="flex-1 overflow-y-auto p-6 hide-scrollbar">
+                    <div className="max-w-2xl mx-auto pb-64"> {/* pb-64 garante espaço para controles + menu */}
                         {textContent ? (
                             <p className="leading-[2] text-slate-300 text-lg font-light text-left whitespace-pre-line animate-fade-in">
                                 {textContent}
@@ -196,9 +200,11 @@
                     </div>
                 </div>
 
-                <div className="fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none z-10"></div>
+                {/* Gradiente para suavizar o final do texto */}
+                <div className="fixed bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent pointer-events-none z-10"></div>
 
-                <div className="absolute bottom-8 left-4 right-4 z-30">
+                {/* Controles Flutuantes - Posicionados ACIMA do menu */}
+                <div className="absolute bottom-24 left-4 right-4 z-30">
                     <div className="glass rounded-2xl p-5 shadow-2xl shadow-black/50 ring-1 ring-white/10">
                         {(isPlaying || isPaused) && (
                             <div className="flex justify-center mb-5 opacity-90">
@@ -254,8 +260,8 @@
         );
 
         const Library = ({ savedItems, setTextContent, setActiveTab, deleteItem }) => (
-            <div className="p-6 pb-32 animate-fade-in">
-                <header className="mb-8">
+            <div className="flex flex-col h-full">
+                <header className="p-6 bg-slate-900 z-10 sticky top-0 border-b border-slate-800">
                     <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                         <Icon name="Library" className="text-orange-500" /> Biblioteca
                     </h2>
@@ -264,107 +270,113 @@
                     </p>
                 </header>
                 
-                <div className="grid gap-4">
-                    {savedItems.length === 0 ? (
-                        <div className="text-center text-slate-600 py-20 border-2 border-dashed border-slate-800 rounded-2xl">
-                            <Icon name="Inbox" size={48} className="mx-auto mb-4 opacity-20" />
-                            <p>Sua biblioteca está vazia.</p>
-                        </div>
-                    ) : (
-                        savedItems.map(item => (
-                            <div key={item.id} onClick={() => { setTextContent(item.text); setActiveTab('player'); }} className="glass p-5 rounded-xl active:scale-[0.99] transition-all cursor-pointer hover:bg-slate-800/50 group border border-slate-700/50 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Icon name="ChevronRight" size={16} className="text-slate-500" />
-                                </div>
-                                
-                                <div className="flex justify-between items-start mb-3 pr-8">
-                                    <h3 className="font-bold text-slate-200 line-clamp-2 text-lg leading-tight">{item.title}</h3>
-                                </div>
-                                
-                                <div className="flex items-center justify-between pt-3 border-t border-slate-700/50">
-                                    <span className="text-xs text-slate-500 font-medium">{item.date}</span>
-                                    <div className="flex gap-3">
-                                        <button onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }} className="text-slate-500 hover:text-red-400 transition-colors p-1">
-                                            <Icon name="Trash2" size={16} />
-                                        </button>
-                                        <div className="flex items-center gap-1.5 text-orange-400 text-xs font-bold uppercase tracking-wider bg-orange-500/10 px-2.5 py-1 rounded-full">
-                                            <Icon name="Play" size={10} fill="currentColor" /> Ouvir
+                <div className="flex-1 overflow-y-auto p-6 pb-32 hide-scrollbar">
+                    <div className="grid gap-4">
+                        {savedItems.length === 0 ? (
+                            <div className="text-center text-slate-600 py-20 border-2 border-dashed border-slate-800 rounded-2xl">
+                                <Icon name="Inbox" size={48} className="mx-auto mb-4 opacity-20" />
+                                <p>Sua biblioteca está vazia.</p>
+                            </div>
+                        ) : (
+                            savedItems.map(item => (
+                                <div key={item.id} onClick={() => { setTextContent(item.text); setActiveTab('player'); }} className="glass p-5 rounded-xl active:scale-[0.99] transition-all cursor-pointer hover:bg-slate-800/50 group border border-slate-700/50 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Icon name="ChevronRight" size={16} className="text-slate-500" />
+                                    </div>
+                                    
+                                    <div className="flex justify-between items-start mb-3 pr-8">
+                                        <h3 className="font-bold text-slate-200 line-clamp-2 text-lg leading-tight">{item.title}</h3>
+                                    </div>
+                                    
+                                    <div className="flex items-center justify-between pt-3 border-t border-slate-700/50">
+                                        <span className="text-xs text-slate-500 font-medium">{item.date}</span>
+                                        <div className="flex gap-3">
+                                            <button onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }} className="text-slate-500 hover:text-red-400 transition-colors p-1">
+                                                <Icon name="Trash2" size={16} />
+                                            </button>
+                                            <div className="flex items-center gap-1.5 text-orange-400 text-xs font-bold uppercase tracking-wider bg-orange-500/10 px-2.5 py-1 rounded-full">
+                                                <Icon name="Play" size={10} fill="currentColor" /> Ouvir
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
-                    )}
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
         );
 
         const Settings = ({ groqKey, setGroqKey, selectedVoice, setSelectedVoice, voices, onReloadVoices }) => (
-            <div className="p-6 pb-32 animate-fade-in">
-                <h2 className="text-2xl font-bold mb-8 text-white">Configurações</h2>
-                <div className="space-y-6">
-                    <div className="glass p-5 rounded-xl border border-slate-700/50">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500">
-                                <Icon name="Key" size={20} />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-slate-200">Chave IA (Groq)</h3>
-                                <p className="text-xs text-slate-500">Para gerar textos novos</p>
-                            </div>
-                        </div>
-                        <input 
-                            type="password" 
-                            value={groqKey}
-                            onChange={(e) => { setGroqKey(e.target.value); localStorage.setItem('leitoria_groq_key', e.target.value); }}
-                            placeholder="gsk_..."
-                            className="w-full bg-slate-900/80 p-3.5 rounded-lg border border-slate-700 text-sm text-white focus:border-orange-500 outline-none transition-colors font-mono"
-                        />
-                    </div>
-                    
-                    <div className="glass p-5 rounded-xl border border-slate-700/50">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
-                                    <Icon name="Mic2" size={20} />
+            <div className="flex flex-col h-full">
+                <header className="p-6 bg-slate-900 z-10 sticky top-0">
+                    <h2 className="text-2xl font-bold text-white">Configurações</h2>
+                </header>
+
+                <div className="flex-1 overflow-y-auto p-6 pb-32 hide-scrollbar">
+                    <div className="space-y-6">
+                        <div className="glass p-5 rounded-xl border border-slate-700/50">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500">
+                                    <Icon name="Key" size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-slate-200">Voz de Leitura</h3>
-                                    <p className="text-xs text-slate-500">
-                                        {voices.some(v => v.lang.includes('pt')) ? "Vozes em Português detectadas" : "Nenhuma voz PT detectada"}
-                                    </p>
+                                    <h3 className="font-bold text-slate-200">Chave IA (Groq)</h3>
+                                    <p className="text-xs text-slate-500">Para gerar textos novos</p>
                                 </div>
                             </div>
-                            <button onClick={onReloadVoices} className="text-xs bg-slate-800 p-2 rounded hover:bg-slate-700 text-blue-400">
-                                <Icon name="RefreshCw" size={14} />
-                            </button>
+                            <input 
+                                type="password" 
+                                value={groqKey}
+                                onChange={(e) => { setGroqKey(e.target.value); localStorage.setItem('leitoria_groq_key', e.target.value); }}
+                                placeholder="gsk_..."
+                                className="w-full bg-slate-900/80 p-3.5 rounded-lg border border-slate-700 text-sm text-white focus:border-orange-500 outline-none transition-colors font-mono"
+                            />
                         </div>
                         
-                        <div className="relative">
-                            <select 
-                                className="w-full bg-slate-900/80 text-white p-3.5 rounded-lg border border-slate-700 appearance-none focus:border-blue-500 outline-none"
-                                value={selectedVoice ? selectedVoice.name : ''}
-                                onChange={(e) => {
-                                    const v = voices.find(vo => vo.name === e.target.value);
-                                    setSelectedVoice(v);
-                                }}
-                            >
-                                <option value="">-- Selecione (Automático: PT-BR) --</option>
-                                {voices.map(v => (
-                                    <option key={v.name} value={v.name}>
-                                        {/* Ícone visual para identificar PT */}
-                                        {v.lang.includes('pt') ? "🇧🇷/🇵🇹 " : "🇺🇸 "}
-                                        {v.name.slice(0,25)} ({v.lang})
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                                <Icon name="ChevronDown" size={16} />
+                        <div className="glass p-5 rounded-xl border border-slate-700/50">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
+                                        <Icon name="Mic2" size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-slate-200">Voz de Leitura</h3>
+                                        <p className="text-xs text-slate-500">
+                                            {voices.some(v => v.lang.includes('pt')) ? "Vozes em Português detectadas" : "Nenhuma voz PT detectada"}
+                                        </p>
+                                    </div>
+                                </div>
+                                <button onClick={onReloadVoices} className="text-xs bg-slate-800 p-2 rounded hover:bg-slate-700 text-blue-400">
+                                    <Icon name="RefreshCw" size={14} />
+                                </button>
                             </div>
+                            
+                            <div className="relative">
+                                <select 
+                                    className="w-full bg-slate-900/80 text-white p-3.5 rounded-lg border border-slate-700 appearance-none focus:border-blue-500 outline-none"
+                                    value={selectedVoice ? selectedVoice.name : ''}
+                                    onChange={(e) => {
+                                        const v = voices.find(vo => vo.name === e.target.value);
+                                        setSelectedVoice(v);
+                                    }}
+                                >
+                                    <option value="">-- Selecione (Automático: PT-BR) --</option>
+                                    {voices.map(v => (
+                                        <option key={v.name} value={v.name}>
+                                            {v.lang.includes('pt') ? "🇧🇷/🇵🇹 " : "🇺🇸 "}
+                                            {v.name.slice(0,25)} ({v.lang})
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                                    <Icon name="ChevronDown" size={16} />
+                                </div>
+                            </div>
+                            <p className="text-[10px] text-slate-500 mt-3">
+                                Dica: Se o sotaque estiver estranho, selecione "Luciana", "Felipe" ou "Joana". Se não aparecerem, clique no botão de atualizar acima.
+                            </p>
                         </div>
-                        <p className="text-[10px] text-slate-500 mt-3">
-                            Dica: Se o sotaque estiver estranho, selecione "Luciana", "Felipe" ou "Joana". Se não aparecerem, clique no botão de atualizar acima.
-                        </p>
                     </div>
                 </div>
             </div>
@@ -408,8 +420,6 @@
             const loadVoices = () => {
                 let available = synth.getVoices();
                 
-                // Filtro robusto para encontrar PT (pt-BR, pt_BR, pt-PT)
-                // Prioridade: 1. pt-BR, 2. pt, 3. outros
                 available.sort((a, b) => {
                     const aPT = a.lang.toLowerCase().includes('pt');
                     const bPT = b.lang.toLowerCase().includes('pt');
@@ -425,13 +435,12 @@
 
                 setVoices(available);
                 
-                // Tenta selecionar automaticamente uma voz brasileira
                 const ptBR = available.find(v => v.lang.replace('_', '-').toLowerCase() === 'pt-br');
                 const ptAny = available.find(v => v.lang.toLowerCase().includes('pt'));
                 
                 if (ptBR) setSelectedVoice(ptBR);
                 else if (ptAny) setSelectedVoice(ptAny);
-                else setSelectedVoice(null); // Deixa nulo para usar o padrão do sistema se não achar nada
+                else setSelectedVoice(null); 
             };
 
             const showToast = (msg, type = 'success') => {
@@ -545,17 +554,10 @@
                 const textToSpeak = text.slice(startOffset);
                 const utt = new SpeechSynthesisUtterance(cleanText(textToSpeak));
                 
-                // FALLBACK CRÍTICO PARA IOS:
-                // Se não tiver voz selecionada, ou se a voz selecionada não for PT,
-                // Força o idioma da utterance para pt-BR. Isso obriga o sistema a usar a voz padrão BR.
                 if (selectedVoice) {
                     utt.voice = selectedVoice;
                 }
-                
-                // Sempre força o idioma para pt-BR, independente da voz.
-                // Isso corrige o "sotaque gringo" se a voz for errada.
                 utt.lang = 'pt-BR'; 
-                
                 utt.rate = speedOverride || rate;
                 utt.pitch = 1;
                 
@@ -625,8 +627,8 @@
             };
 
             return (
-                <div className="max-w-md mx-auto min-h-screen bg-slate-900 relative shadow-2xl overflow-hidden font-sans text-gray-100">
-                    <main>
+                <div className="max-w-md mx-auto min-h-screen bg-slate-900 relative shadow-2xl overflow-hidden font-sans text-gray-100 flex flex-col">
+                    <main className="flex-1 overflow-hidden relative">
                         {activeTab === 'home' && <Home setActiveTab={setActiveTab} textContent={textContent} setTextContent={setTextContent} handleFile={handleFile} aiPrompt={aiPrompt} setAiPrompt={setAiPrompt} generateText={generateText} isGenerating={isGenerating} />}
                         {activeTab === 'player' && <Player 
                             stop={stop} 
@@ -656,23 +658,19 @@
                         </div>
                     )}
 
-                    {activeTab !== 'player' && (
-                        <nav className="fixed bottom-0 w-full max-w-md bg-slate-900/95 backdrop-blur-md border-t border-slate-800 pb-safe z-40">
-                            <div className="flex justify-around items-center h-16">
-                                <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'home' ? 'text-orange-500' : 'text-slate-500'}`}>
-                                    <Icon name="PenTool" size={20} />
-                                    <span className="text-[10px] font-medium">Criar</span>
-                                </button>
-                                <button onClick={() => { if (textContent) setActiveTab('player'); else showToast("Selecione um texto!", "error"); }} className={`relative -top-6 bg-orange-600 text-white p-4 rounded-full shadow-lg shadow-orange-600/30 active:scale-95 transition-transform ring-8 ring-slate-900`}>
-                                    <Icon name="Play" size={28} fill="white" className="ml-1" />
-                                </button>
-                                <button onClick={() => setActiveTab('library')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'library' ? 'text-orange-500' : 'text-slate-500'}`}>
-                                    <Icon name="Library" size={20} />
-                                    <span className="text-[10px] font-medium">Biblioteca</span>
-                                </button>
-                            </div>
-                        </nav>
-                    )}
+                    <nav className="h-16 w-full max-w-md bg-slate-900/95 backdrop-blur-md border-t border-slate-800 flex justify-around items-center z-40 fixed bottom-0 left-0 right-0 mx-auto">
+                        <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'home' ? 'text-orange-500' : 'text-slate-500'}`}>
+                            <Icon name="PenTool" size={20} />
+                            <span className="text-[10px] font-medium">Criar</span>
+                        </button>
+                        <button onClick={() => { if (textContent) setActiveTab('player'); else showToast("Selecione um texto!", "error"); }} className={`relative -top-6 bg-orange-600 text-white p-4 rounded-full shadow-lg shadow-orange-600/30 active:scale-95 transition-transform ring-8 ring-slate-900`}>
+                            <Icon name="Play" size={28} fill="white" className="ml-1" />
+                        </button>
+                        <button onClick={() => setActiveTab('library')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'library' ? 'text-orange-500' : 'text-slate-500'}`}>
+                            <Icon name="Library" size={20} />
+                            <span className="text-[10px] font-medium">Biblioteca</span>
+                        </button>
+                    </nav>
                 </div>
             );
         }
