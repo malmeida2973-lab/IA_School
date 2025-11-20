@@ -168,7 +168,6 @@
                             </div>
                         )}
                         
-                        {/* Botão Continuar Assunto - Só aparece se tiver um assunto anterior */}
                         {textContent && lastPrompt && (
                             <div className="mt-12 mb-8 p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 text-center">
                                 <div className="mb-4 flex justify-center text-orange-500 opacity-80">
@@ -300,7 +299,7 @@
             </div>
         );
 
-        const Settings = ({ groqKey, setGroqKey, selectedVoice, setSelectedVoice, voices }) => (
+        const Settings = ({ groqKey, setGroqKey, selectedVoice, setSelectedVoice, voices, onReloadVoices }) => (
             <div className="p-6 pb-32 animate-fade-in">
                 <h2 className="text-2xl font-bold mb-8 text-white">Configurações</h2>
                 <div className="space-y-6">
@@ -324,25 +323,37 @@
                     </div>
                     
                     <div className="glass p-5 rounded-xl border border-slate-700/50">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
-                                <Icon name="Mic2" size={20} />
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
+                                    <Icon name="Mic2" size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-slate-200">Voz de Leitura</h3>
+                                    <p className="text-xs text-slate-500">
+                                        {voices.some(v => v.lang.includes('pt')) ? "Vozes em Português detectadas" : "Nenhuma voz PT detectada"}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="font-bold text-slate-200">Voz de Leitura</h3>
-                                <p className="text-xs text-slate-500">
-                                    Procure por "Luciana" (BR) ou "Joana" (PT)
-                                </p>
-                            </div>
+                            <button onClick={onReloadVoices} className="text-xs bg-slate-800 p-2 rounded hover:bg-slate-700 text-blue-400">
+                                <Icon name="RefreshCw" size={14} />
+                            </button>
                         </div>
+                        
                         <div className="relative">
                             <select 
                                 className="w-full bg-slate-900/80 text-white p-3.5 rounded-lg border border-slate-700 appearance-none focus:border-blue-500 outline-none"
-                                value={selectedVoice?.name || ''}
-                                onChange={(e) => setSelectedVoice(voices.find(v => v.name === e.target.value))}
+                                value={selectedVoice ? selectedVoice.name : ''}
+                                onChange={(e) => {
+                                    const v = voices.find(vo => vo.name === e.target.value);
+                                    setSelectedVoice(v);
+                                }}
                             >
+                                <option value="">-- Selecione (Automático: PT-BR) --</option>
                                 {voices.map(v => (
                                     <option key={v.name} value={v.name}>
+                                        {/* Ícone visual para identificar PT */}
+                                        {v.lang.includes('pt') ? "🇧🇷/🇵🇹 " : "🇺🇸 "}
                                         {v.name.slice(0,25)} ({v.lang})
                                     </option>
                                 ))}
@@ -351,6 +362,9 @@
                                 <Icon name="ChevronDown" size={16} />
                             </div>
                         </div>
+                        <p className="text-[10px] text-slate-500 mt-3">
+                            Dica: Se o sotaque estiver estranho, selecione "Luciana", "Felipe" ou "Joana". Se não aparecerem, clique no botão de atualizar acima.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -360,7 +374,7 @@
             const [activeTab, setActiveTab] = useState('home');
             const [textContent, setTextContent] = useState(''); 
             const [aiPrompt, setAiPrompt] = useState(''); 
-            const [lastPrompt, setLastPrompt] = useState(''); // Memória do último assunto
+            const [lastPrompt, setLastPrompt] = useState(''); 
             const [isGenerating, setIsGenerating] = useState(false);
             const [savedItems, setSavedItems] = useState([]);
             
@@ -384,27 +398,41 @@
                 const key = localStorage.getItem('leitoria_groq_key');
                 if (key) setGroqKey(key);
 
-                const loadVoices = () => {
-                    let available = synth.getVoices();
-                    
-                    available.sort((a, b) => {
-                        if (a.lang.includes('pt-BR') && !b.lang.includes('pt-BR')) return -1;
-                        if (!a.lang.includes('pt-BR') && b.lang.includes('pt-BR')) return 1;
-                        return a.name.localeCompare(b.name);
-                    });
-
-                    setVoices(available);
-                    const pt = available.find(v => v.lang === 'pt-BR') || available.find(v => v.lang.includes('pt')) || available[0];
-                    setSelectedVoice(pt);
-                };
-                
                 loadVoices();
+                
                 if (speechSynthesis.onvoiceschanged !== undefined) {
                     speechSynthesis.onvoiceschanged = loadVoices;
                 }
-                setTimeout(loadVoices, 1000);
-
             }, []);
+
+            const loadVoices = () => {
+                let available = synth.getVoices();
+                
+                // Filtro robusto para encontrar PT (pt-BR, pt_BR, pt-PT)
+                // Prioridade: 1. pt-BR, 2. pt, 3. outros
+                available.sort((a, b) => {
+                    const aPT = a.lang.toLowerCase().includes('pt');
+                    const bPT = b.lang.toLowerCase().includes('pt');
+                    const aBR = a.lang.toLowerCase().includes('br');
+                    const bBR = b.lang.toLowerCase().includes('br');
+
+                    if (aBR && !bBR) return -1;
+                    if (!aBR && bBR) return 1;
+                    if (aPT && !bPT) return -1;
+                    if (!aPT && bPT) return 1;
+                    return a.name.localeCompare(b.name);
+                });
+
+                setVoices(available);
+                
+                // Tenta selecionar automaticamente uma voz brasileira
+                const ptBR = available.find(v => v.lang.replace('_', '-').toLowerCase() === 'pt-br');
+                const ptAny = available.find(v => v.lang.toLowerCase().includes('pt'));
+                
+                if (ptBR) setSelectedVoice(ptBR);
+                else if (ptAny) setSelectedVoice(ptAny);
+                else setSelectedVoice(null); // Deixa nulo para usar o padrão do sistema se não achar nada
+            };
 
             const showToast = (msg, type = 'success') => {
                 setToast({ msg, type });
@@ -415,7 +443,7 @@
                 if (!aiPrompt.trim()) return showToast("Digite o que você quer gerar", "error");
                 
                 setIsGenerating(true);
-                setLastPrompt(aiPrompt); // Salva o tema
+                setLastPrompt(aiPrompt); 
 
                 try {
                     let result = "";
@@ -458,15 +486,12 @@
                 }
             };
 
-            // --- NOVA FUNÇÃO: CONTINUAR ASSUNTO ---
             const continueGenerating = async () => {
                 if (!lastPrompt) return;
-                
                 setIsGenerating(true);
                 try {
                     let result = "";
                     const cleanKey = groqKey ? groqKey.trim() : "";
-
                     if (cleanKey) {
                         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                             method: "POST",
@@ -479,21 +504,16 @@
                                 model: "llama-3.3-70b-versatile"
                             })
                         });
-                        
                         const data = await response.json();
                         if (!response.ok) throw new Error(data.error?.message || "Erro na API");
                         result = data.choices?.[0]?.message?.content;
-                        
                     } else {
                         await new Promise(r => setTimeout(r, 1500));
                         result = `\n\n[Continuação Simulada]\n\nFalando mais sobre ${lastPrompt}, é interessante notar que existem outros aspectos que muitas vezes são ignorados...`;
                     }
-                    
                     const cleaned = cleanText(result);
-                    // Adiciona ao final com duas quebras de linha
                     setTextContent(prev => prev + "\n\n" + cleaned);
                     showToast("Texto expandido!");
-                    
                 } catch (e) {
                     showToast("Erro ao continuar", "error");
                 } finally {
@@ -525,10 +545,19 @@
                 const textToSpeak = text.slice(startOffset);
                 const utt = new SpeechSynthesisUtterance(cleanText(textToSpeak));
                 
-                if (selectedVoice) utt.voice = selectedVoice;
+                // FALLBACK CRÍTICO PARA IOS:
+                // Se não tiver voz selecionada, ou se a voz selecionada não for PT,
+                // Força o idioma da utterance para pt-BR. Isso obriga o sistema a usar a voz padrão BR.
+                if (selectedVoice) {
+                    utt.voice = selectedVoice;
+                }
+                
+                // Sempre força o idioma para pt-BR, independente da voz.
+                // Isso corrige o "sotaque gringo" se a voz for errada.
+                utt.lang = 'pt-BR'; 
+                
                 utt.rate = speedOverride || rate;
                 utt.pitch = 1;
-                utt.lang = 'pt-BR';
                 
                 utt.onboundary = (event) => {
                     if (event.name === 'word') {
@@ -612,12 +641,12 @@
                             showToast={showToast} 
                             speakText={speakText} 
                             currentPositionRef={charIndexRef}
-                            lastPrompt={lastPrompt} // Passa o último tema
-                            continueGenerating={continueGenerating} // Passa a função de continuar
-                            isGenerating={isGenerating} // Para mostrar loading no botão
+                            lastPrompt={lastPrompt} 
+                            continueGenerating={continueGenerating} 
+                            isGenerating={isGenerating} 
                         />}
                         {activeTab === 'library' && <Library savedItems={savedItems} setTextContent={setTextContent} setActiveTab={setActiveTab} deleteItem={deleteItem} />}
-                        {activeTab === 'settings' && <Settings groqKey={groqKey} setGroqKey={setGroqKey} selectedVoice={selectedVoice} setSelectedVoice={setSelectedVoice} voices={voices} />}
+                        {activeTab === 'settings' && <Settings groqKey={groqKey} setGroqKey={setGroqKey} selectedVoice={selectedVoice} setSelectedVoice={setSelectedVoice} voices={voices} onReloadVoices={loadVoices} />}
                     </main>
 
                     {toast && (
