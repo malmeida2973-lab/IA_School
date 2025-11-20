@@ -13,13 +13,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; -webkit-tap-highlight-color: transparent; }
         
-        /* Scrollbar invisível mas funcional */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .glass { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
         
-        /* Animação do Player */
         .voice-wave { display: flex; justify-content: center; align-items: center; gap: 4px; height: 24px; }
         .bar { width: 4px; background: #f97316; animation: wave 1s ease-in-out infinite; border-radius: 2px; }
         @keyframes wave { 0%, 100% { height: 8px; } 50% { height: 24px; } }
@@ -34,7 +32,6 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
         
-        // --- Utilitário para limpar Markdown ---
         const cleanText = (text) => {
             if (!text) return "";
             return text
@@ -46,7 +43,6 @@
                 .trim();
         };
 
-        // --- Ícone ---
         const Icon = ({ name, size = 24, color = "currentColor", className = "" }) => {
             const elementRef = useRef(null);
             useEffect(() => {
@@ -64,8 +60,6 @@
             }, [name, size, color, className]);
             return <span ref={elementRef} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} />;
         };
-
-        // --- COMPONENTES VISUAIS ---
 
         const Home = ({ setActiveTab, textContent, setTextContent, handleFile, aiPrompt, setAiPrompt, generateText, isGenerating }) => (
             <div className="flex flex-col h-full">
@@ -101,7 +95,7 @@
                                 onClick={() => setActiveTab('player')}
                                 className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20 transition-all active:scale-[0.98]"
                             >
-                                <Icon name="PlayCircle" /> Ouvir este texto
+                                <Icon name="Headphones" /> Ouvir este texto
                             </button>
                         )}
                     </div>
@@ -117,13 +111,13 @@
                             <div className="p-1.5 bg-orange-500/10 rounded-lg">
                                 <Icon name="Sparkles" size={18} />
                             </div>
-                            <span className="font-bold text-sm">Criar com IA</span>
+                            <span className="font-bold text-sm">Criar com IA (Modo Detalhado)</span>
                         </div>
                         <input 
                             type="text"
                             value={aiPrompt}
                             onChange={(e) => setAiPrompt(e.target.value)}
-                            placeholder="Ex: História da Roma Antiga..."
+                            placeholder="Ex: Biografia detalhada de Santos Dumont..."
                             className="w-full bg-slate-900/80 border border-slate-700/50 rounded-xl p-3.5 text-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all"
                         />
                         <button 
@@ -132,7 +126,7 @@
                             className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-lg shadow-orange-900/20"
                         >
                             {isGenerating ? <span className="animate-spin">⌛</span> : <Icon name="Zap" size={18} />}
-                            {isGenerating ? "Escrevendo..." : "Gerar Texto"}
+                            {isGenerating ? "Escrevendo..." : "Gerar Texto Completo"}
                         </button>
                     </div>
                 </div>
@@ -141,8 +135,8 @@
 
         const Player = ({ stop, setActiveTab, saveToLibrary, textContent, isPlaying, isPaused, rate, setRate, play, showToast, speakText, currentPositionRef, lastPrompt, continueGenerating, isGenerating }) => (
             <div className="h-full flex flex-col bg-slate-900 relative">
-                {/* Header do Player - Fixo no topo */}
-                <div className="p-4 pt-8 flex justify-between items-center bg-slate-900/95 backdrop-blur-md z-20 sticky top-0 border-b border-slate-800">
+                {/* Header do Player - Fixo */}
+                <div className="p-4 pt-6 flex justify-between items-center bg-slate-900 border-b border-slate-800 z-20 shrink-0">
                     <button onClick={() => { stop(); setActiveTab('home'); }} className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors">
                         <Icon name="ChevronDown" />
                     </button>
@@ -157,9 +151,9 @@
                     </button>
                 </div>
 
-                {/* Conteúdo de Texto - Única parte que rola */}
-                <div className="flex-1 overflow-y-auto p-6 hide-scrollbar">
-                    <div className="max-w-2xl mx-auto pb-64"> {/* pb-64 garante espaço para controles + menu */}
+                {/* Conteúdo de Texto - Área que rola */}
+                <div className="flex-1 overflow-y-auto p-6 hide-scrollbar bg-slate-900">
+                    <div className="max-w-2xl mx-auto pb-8"> 
                         {textContent ? (
                             <p className="leading-[2] text-slate-300 text-lg font-light text-left whitespace-pre-line animate-fade-in">
                                 {textContent}
@@ -177,21 +171,21 @@
                                 <div className="mb-4 flex justify-center text-orange-500 opacity-80">
                                     <Icon name="Sparkles" size={24} />
                                 </div>
-                                <h3 className="text-lg font-bold text-white mb-2">Gostou do assunto?</h3>
-                                <p className="text-sm text-slate-400 mb-4">A IA pode continuar escrevendo mais sobre "{lastPrompt}" para você.</p>
+                                <h3 className="text-lg font-bold text-white mb-2">Quer aprofundar mais?</h3>
+                                <p className="text-sm text-slate-400 mb-4">A IA pode trazer mais detalhes inéditos sobre "{lastPrompt}".</p>
                                 
                                 <button 
                                     onClick={continueGenerating}
                                     disabled={isGenerating}
-                                    className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-orange-900/20 disabled:opacity-50"
+                                    className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
                                 >
                                     {isGenerating ? (
                                         <>
-                                            <span className="animate-spin">⌛</span> Escrevendo mais...
+                                            <span className="animate-spin">⌛</span> Pesquisando mais...
                                         </>
                                     ) : (
                                         <>
-                                            <Icon name="PlusCircle" size={20} /> Continuar Texto
+                                            <Icon name="PlusCircle" size={20} /> Expandir Conteúdo
                                         </>
                                     )}
                                 </button>
@@ -200,60 +194,58 @@
                     </div>
                 </div>
 
-                {/* Gradiente para suavizar o final do texto */}
-                <div className="fixed bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent pointer-events-none z-10"></div>
+                {/* BARRA DE CONTROLES - FIXA NO RODAPÉ DO PLAYER (Acima da Nav Global) */}
+                <div className="shrink-0 bg-slate-900 border-t border-slate-800 p-4 pb-24"> 
+                    <div className="glass rounded-2xl p-4 shadow-lg ring-1 ring-white/5 flex items-center justify-between gap-4">
+                        {/* Velocidade */}
+                        <button 
+                            onClick={() => { 
+                                let newRate = 1;
+                                if (rate === 1) newRate = 1.25;
+                                else if (rate === 1.25) newRate = 1.5;
+                                else if (rate === 1.5) newRate = 2;
+                                else if (rate === 2) newRate = 0.75;
+                                else newRate = 1;
 
-                {/* Controles Flutuantes - Posicionados ACIMA do menu */}
-                <div className="absolute bottom-24 left-4 right-4 z-30">
-                    <div className="glass rounded-2xl p-5 shadow-2xl shadow-black/50 ring-1 ring-white/10">
-                        {(isPlaying || isPaused) && (
-                            <div className="flex justify-center mb-5 opacity-90">
-                                <div className="voice-wave">
-                                    <div className="bar"></div><div className="bar"></div><div className="bar"></div><div className="bar"></div><div className="bar"></div>
+                                setRate(newRate);
+                                showToast(`Velocidade: ${newRate}x`);
+                                if (isPlaying) { 
+                                    const currentPos = currentPositionRef.current;
+                                    stop(false); 
+                                    setTimeout(() => speakText(textContent, newRate, currentPos), 50); 
+                                }
+                            }}
+                            className="flex flex-col items-center justify-center w-12 h-12 rounded-full hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+                        >
+                            <span className="text-sm font-bold">{rate}x</span>
+                            <span className="text-[9px] uppercase tracking-wider opacity-60">Vel.</span>
+                        </button>
+
+                        {/* Play/Pause - Maior e Central */}
+                        <div className="relative">
+                            {(isPlaying || isPaused) && (
+                                <div className="absolute -top-12 left-1/2 -translate-x-1/2 mb-2 opacity-80 pointer-events-none">
+                                     <div className="voice-wave">
+                                        <div className="bar"></div><div className="bar"></div><div className="bar"></div><div className="bar"></div><div className="bar"></div>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-
-                        <div className="flex items-center justify-between px-2">
-                            <button 
-                                onClick={() => { 
-                                    let newRate = 1;
-                                    if (rate === 1) newRate = 1.25;
-                                    else if (rate === 1.25) newRate = 1.5;
-                                    else if (rate === 1.5) newRate = 2;
-                                    else if (rate === 2) newRate = 0.75;
-                                    else newRate = 1;
-
-                                    setRate(newRate);
-                                    showToast(`Velocidade: ${newRate}x`);
-                                    
-                                    if (isPlaying) { 
-                                        const currentPos = currentPositionRef.current;
-                                        stop(false); 
-                                        setTimeout(() => speakText(textContent, newRate, currentPos), 50); 
-                                    }
-                                }}
-                                className="flex flex-col items-center justify-center w-12 h-12 rounded-full hover:bg-white/5 text-slate-400 hover:text-white transition-colors gap-1"
-                            >
-                                <span className="text-sm font-bold">{rate}x</span>
-                                <span className="text-[9px] uppercase tracking-wider opacity-60">Vel.</span>
-                            </button>
-
+                            )}
                             <button 
                                 onClick={play}
-                                className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-orange-500/40 hover:scale-105 hover:bg-orange-400 transition-all active:scale-95"
+                                className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white shadow-xl shadow-orange-500/30 hover:scale-105 hover:bg-orange-400 transition-all active:scale-95"
                             >
                                 <Icon name={isPlaying ? "Pause" : "Play"} size={32} fill="white" className="ml-1" />
                             </button>
-
-                            <button 
-                                onClick={() => stop(true)} 
-                                className="flex flex-col items-center justify-center w-12 h-12 rounded-full hover:bg-white/5 text-slate-400 hover:text-red-400 transition-colors gap-1"
-                            >
-                                <Icon name="Square" size={16} fill="currentColor" />
-                                <span className="text-[9px] uppercase tracking-wider opacity-60">Parar</span>
-                            </button>
                         </div>
+
+                        {/* Stop */}
+                        <button 
+                            onClick={() => stop(true)} 
+                            className="flex flex-col items-center justify-center w-12 h-12 rounded-full hover:bg-white/5 text-slate-400 hover:text-red-400 transition-colors"
+                        >
+                            <Icon name="Square" size={18} fill="currentColor" />
+                            <span className="text-[9px] uppercase tracking-wider opacity-60">Parar</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -280,14 +272,9 @@
                         ) : (
                             savedItems.map(item => (
                                 <div key={item.id} onClick={() => { setTextContent(item.text); setActiveTab('player'); }} className="glass p-5 rounded-xl active:scale-[0.99] transition-all cursor-pointer hover:bg-slate-800/50 group border border-slate-700/50 relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Icon name="ChevronRight" size={16} className="text-slate-500" />
-                                    </div>
-                                    
                                     <div className="flex justify-between items-start mb-3 pr-8">
                                         <h3 className="font-bold text-slate-200 line-clamp-2 text-lg leading-tight">{item.title}</h3>
                                     </div>
-                                    
                                     <div className="flex items-center justify-between pt-3 border-t border-slate-700/50">
                                         <span className="text-xs text-slate-500 font-medium">{item.date}</span>
                                         <div className="flex gap-3">
@@ -295,7 +282,7 @@
                                                 <Icon name="Trash2" size={16} />
                                             </button>
                                             <div className="flex items-center gap-1.5 text-orange-400 text-xs font-bold uppercase tracking-wider bg-orange-500/10 px-2.5 py-1 rounded-full">
-                                                <Icon name="Play" size={10} fill="currentColor" /> Ouvir
+                                                <Icon name="Headphones" size={10} /> Ouvir
                                             </div>
                                         </div>
                                     </div>
@@ -373,9 +360,6 @@
                                     <Icon name="ChevronDown" size={16} />
                                 </div>
                             </div>
-                            <p className="text-[10px] text-slate-500 mt-3">
-                                Dica: Se o sotaque estiver estranho, selecione "Luciana", "Felipe" ou "Joana". Se não aparecerem, clique no botão de atualizar acima.
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -411,7 +395,6 @@
                 if (key) setGroqKey(key);
 
                 loadVoices();
-                
                 if (speechSynthesis.onvoiceschanged !== undefined) {
                     speechSynthesis.onvoiceschanged = loadVoices;
                 }
@@ -419,25 +402,20 @@
 
             const loadVoices = () => {
                 let available = synth.getVoices();
-                
                 available.sort((a, b) => {
                     const aPT = a.lang.toLowerCase().includes('pt');
                     const bPT = b.lang.toLowerCase().includes('pt');
                     const aBR = a.lang.toLowerCase().includes('br');
                     const bBR = b.lang.toLowerCase().includes('br');
-
                     if (aBR && !bBR) return -1;
                     if (!aBR && bBR) return 1;
                     if (aPT && !bPT) return -1;
                     if (!aPT && bPT) return 1;
                     return a.name.localeCompare(b.name);
                 });
-
                 setVoices(available);
-                
                 const ptBR = available.find(v => v.lang.replace('_', '-').toLowerCase() === 'pt-br');
                 const ptAny = available.find(v => v.lang.toLowerCase().includes('pt'));
-                
                 if (ptBR) setSelectedVoice(ptBR);
                 else if (ptAny) setSelectedVoice(ptAny);
                 else setSelectedVoice(null); 
@@ -464,8 +442,9 @@
                             headers: { "Authorization": `Bearer ${cleanKey}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 messages: [
-                                    { role: "system", content: "Você é um redator especialista em criar textos de alta qualidade para leitura e áudio (TTS). Sua missão é: 1. Estruturar o texto com título, introdução, desenvolvimento e conclusão. 2. Usar parágrafos curtos, claros e bem conectados. 3. Adotar um tom didático, envolvente e humanizado. 4. NÃO use asteriscos (**), negrito ou formatação markdown complexa, envie texto puro otimizado para voz. Responda em Português do Brasil." },
-                                    { role: "user", content: aiPrompt }
+                                    // PROMPT TURBINADO PARA CONTEÚDO DETALHADO
+                                    { role: "system", content: "Você é um professor universitário e redator especialista. Sua missão é criar um conteúdo EXTREMAMENTE COMPLETO, DETALHADO, PROFUNDO e RICO em informações sobre o tema solicitado. 1. Estruture o texto com Título, Introdução Robusta, Múltiplos Tópicos de Desenvolvimento, Curiosidades Históricas/Técnicas e Conclusão. 2. O texto deve ser longo e educativo, ideal para uma aula ou podcast aprofundado. 3. Use linguagem clara, culta e fluida para leitura em voz alta (TTS). 4. EVITE listas curtas; prefira parágrafos descritivos. 5. NÃO use asteriscos (**), markdown ou formatação complexa, apenas texto puro. Responda sempre em Português do Brasil." },
+                                    { role: "user", content: `Escreva um texto completo e detalhado sobre: ${aiPrompt}` }
                                 ],
                                 model: "llama-3.3-70b-versatile"
                             })
@@ -478,7 +457,7 @@
                         
                     } else {
                         await new Promise(r => setTimeout(r, 1500));
-                        result = `[Modo Simulação]\n\nTexto sobre: "${aiPrompt}".\n\nAjustamos a formatação para alinhar o texto à esquerda. Isso evita aqueles espaços grandes entre as palavras que dificultam a leitura em telas pequenas. Agora o visual está muito mais limpo e confortável.`;
+                        result = `[Modo Simulação - Texto Detalhado]\n\nPara obter o texto completo e detalhado sobre "${aiPrompt}", por favor configure sua chave API gratuita da Groq nas configurações.\n\nNo modo real, a IA geraria um artigo profundo, cobrindo aspectos históricos, técnicos e curiosidades, ideal para ouvir durante longas viagens.`;
                     }
                     
                     const cleaned = cleanText(result);
@@ -507,8 +486,8 @@
                             headers: { "Authorization": `Bearer ${cleanKey}`, "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 messages: [
-                                    { role: "system", content: "Você está continuando um texto anterior. Traga novos fatos, curiosidades ou aprofunde o tema. Mantenha o estilo didático e fluido para áudio. Não repita a introdução. Responda em Português." },
-                                    { role: "user", content: `Continue falando sobre: ${lastPrompt}. Traga mais informações interessantes.` }
+                                    { role: "system", content: "Você está continuando um texto anterior. Traga novos fatos, curiosidades inéditas e aprofunde ainda mais o tema. Mantenha o estilo didático, detalhado e fluido. Não repita informações anteriores. Responda em Português." },
+                                    { role: "user", content: `Continue falando sobre: ${lastPrompt}. Traga mais detalhes profundos e interessantes.` }
                                 ],
                                 model: "llama-3.3-70b-versatile"
                             })
@@ -518,11 +497,11 @@
                         result = data.choices?.[0]?.message?.content;
                     } else {
                         await new Promise(r => setTimeout(r, 1500));
-                        result = `\n\n[Continuação Simulada]\n\nFalando mais sobre ${lastPrompt}, é interessante notar que existem outros aspectos que muitas vezes são ignorados...`;
+                        result = `\n\n[Continuação Simulada]\n\nFalando mais sobre ${lastPrompt}, é interessante notar que...`;
                     }
                     const cleaned = cleanText(result);
                     setTextContent(prev => prev + "\n\n" + cleaned);
-                    showToast("Texto expandido!");
+                    showToast("Conteúdo expandido!");
                 } catch (e) {
                     showToast("Erro ao continuar", "error");
                 } finally {
@@ -554,9 +533,7 @@
                 const textToSpeak = text.slice(startOffset);
                 const utt = new SpeechSynthesisUtterance(cleanText(textToSpeak));
                 
-                if (selectedVoice) {
-                    utt.voice = selectedVoice;
-                }
+                if (selectedVoice) utt.voice = selectedVoice;
                 utt.lang = 'pt-BR'; 
                 utt.rate = speedOverride || rate;
                 utt.pitch = 1;
@@ -663,8 +640,9 @@
                             <Icon name="PenTool" size={20} />
                             <span className="text-[10px] font-medium">Criar</span>
                         </button>
+                        {/* ÍCONE NOVO: Headphones em vez de Play, para não confundir */}
                         <button onClick={() => { if (textContent) setActiveTab('player'); else showToast("Selecione um texto!", "error"); }} className={`relative -top-6 bg-orange-600 text-white p-4 rounded-full shadow-lg shadow-orange-600/30 active:scale-95 transition-transform ring-8 ring-slate-900`}>
-                            <Icon name="Play" size={28} fill="white" className="ml-1" />
+                            <Icon name="Headphones" size={28} fill="white" className="ml-0.5" />
                         </button>
                         <button onClick={() => setActiveTab('library')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'library' ? 'text-orange-500' : 'text-slate-500'}`}>
                             <Icon name="Library" size={20} />
